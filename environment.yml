@@ -1,0 +1,18 @@
+name: misosoup-preview
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.9
+  - pip
+  - nomkl
+  - altair
+  - ipykernel
+  - jupyter
+  - pandas
+  - pip:
+    - alphatims
+    - awswrangler
+    - duckdb
+    - IsoSpecPy
+    - molmass
