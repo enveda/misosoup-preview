@@ -120,6 +120,7 @@ class MisoQuery(str):
             )
         )
 
+
 # ------------------------------------------------------------------------------
 # Query Functions
 # ------------------------------------------------------------------------------
@@ -143,6 +144,75 @@ def get_chromatograms(
     _msrun_ids = sanitize_list(msrun_ids)
     query = fetch_template(template).format(
         msrun_ids=_msrun_ids, ms_level=ms_level,
+    )
+    return MisoQuery(query)
+
+
+def get_ms1_features(
+    msrun_ids,
+    *,
+    feature_id=None,
+    mz_range=None,
+    rt_range=None,
+    min_ms1_intensity=10,
+    rt_window=10.0,
+    spectrum_window=5,
+    tof_window=3,
+    template="duckdb/get_ms1_features.sql",
+):
+    """Get MS1 features and their neighborhood signals.
+
+    Parameters
+    ----------
+    msrun_ids : Iterable[str]
+        A collection of msrun_ids (list, tuple, set, numpy, pandas)
+        or a single msrun_id (str).
+    feature_id : int
+        filter by feature ID
+    mz_range : Iterable[float, float]
+        filter by feature m/z range
+    rt_range : Iterable[float, float]
+        filter by feature retention time range
+    min_ms1_intensity : int
+        filter MS1 signal by its corrected intensity
+    rt_window : float, default=10.0
+        diameter of retention time window around the peak
+    tof_window : int, default=3
+        radius of TOF window around the peak
+    spectrum_window : int, default=5
+        diameter of spectrum(scan) window around the peak
+    template : str, default "duckdb/get_ms1_features.sql"
+        SQL query template.
+
+    Examples
+    --------
+    >>> features = misosoup.sql.get_ms1_features('LIPID6950').run()
+    >>> # 1033418 rows in 16.8 s
+    """
+
+    _filter_clauses = ""
+
+    if feature_id is not None:
+        clause = f"AND feature_id = {feature_id}"
+        _filter_clauses += "\n\t" + clause
+
+    if validate_range(mz_range):
+        clause = f"AND mz BETWEEN {mz_range[0]} AND {mz_range[1]}"
+        _filter_clauses += "\n\t" + clause
+
+    if validate_range(rt_range):
+        clause = f"AND rt BETWEEN {rt_range[0]} AND {rt_range[1]}"
+        _filter_clauses += "\n\t" + clause
+
+    _msrun_ids = sanitize_list(msrun_ids)
+
+    query = fetch_template(template).format(
+        msrun_ids=_msrun_ids,
+        filter_clauses=_filter_clauses,
+        min_ms1_intensity=min_ms1_intensity,
+        rt_window=rt_window,
+        tof_window=tof_window,
+        spectrum_window=spectrum_window,
     )
     return MisoQuery(query)
 
@@ -187,3 +257,18 @@ def sanitize_list(list_like_arg):
             "(str, list, tuple, set, np.ndarray, pd.Series)"
         )
     return _ids
+
+
+def validate_range(field_range) -> bool:
+    """Check if field_range is provided and ensure correct format."""
+
+    if field_range is None:
+        return False
+    if (
+        isinstance(field_range, (list, tuple, np.ndarray))
+        and len(field_range) == 2
+        and field_range[0] <= field_range[1]
+    ):
+        return True
+    else:
+        raise ValueError(f"invalid range: {field_range}")
