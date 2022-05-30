@@ -36,7 +36,7 @@ os.chdir(DATA_ROOT)  # we start in the data folder by default
 def register_parquet_data(folder=DATA_ROOT):
     duckdb_connection = duckdb.connect()
     for table in os.listdir(folder):
-        path = os.path.join(DATA_ROOT, table)
+        path = os.path.join(folder, table)
         dataset = pyarrow_dataset(path, format="parquet", partitioning="hive")
         duckdb_connection.register(table, dataset)
     return duckdb_connection

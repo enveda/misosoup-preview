@@ -40,7 +40,7 @@ JOIN ms1
     AND ms1.mz_group = peak.mz_group
     AND ms1.spectrum - peak.spectrum BETWEEN -{spectrum_window}/2 AND {spectrum_window}/2
     AND ms1.tof - peak.tof BETWEEN -{tof_window} AND {tof_window}
-    AND peak.intensity / ms1.intensity <= 10000  -- signals contributing at least 0.01% to peak_intensity
+    AND peak.intensity / ms1.intensity <= 500  -- signals contributing at least 0.01% to peak_intensity
 JOIN frame
     ON frame.msrun_id = ms1.msrun_id
     AND frame.frame = ms1.frame
