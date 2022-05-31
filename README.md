@@ -34,7 +34,16 @@ Here we demonstrate the data model and some of the MisoSoup features using a NIS
 `conda env create -f environment.yml`
 
 ## Usage
-[notebook link]
+[live notebook link]
+
+This repo contains one lipidomics run processed with MisoSoup, `msrun_id 'LIPID6950'`.  Upon importing misosoup, the Parquet files are registered as a DuckDB database, and are instantly available for querying via `MisoQuery`.
+
+```python
+import misosoup  # must be on sys.path
+from misosoup.sql import MisoQuery as MSQ
+MSQ("PRAGMA show_tables").run()
+MSQ("SELECT * FROM peak WHERE msrun_id = 'LIPID6950'").run()
+```
 
 ## Join Interest List
 [google doc link](https://tinyurl.com/waut5dmp)

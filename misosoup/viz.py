@@ -25,7 +25,7 @@ ALTAIR_CSS = """
 <style>
 .vega-bind > label > input {
   -webkit-appearance: none;
-  width: 800px;
+  width: 960px;
   border-radius: 20px;
   background: #f4b183;
 }
@@ -112,8 +112,9 @@ def add_zoom(chart: alt.Chart, x_axis_key="shift"):
 
 def plot_fims_with_rt_filter(
     df,
+    rt_window=10,
     title="FIMS Plot (use slider below to select RT window)",
-    figsize=(720, 400),
+    figsize=(960, 300),
 ):
     """FIMS plot with RT filter."""
 
@@ -123,16 +124,16 @@ def plot_fims_with_rt_filter(
         min=min(df.rt),
         max=max(df.rt),
         step=1,
-        name="Retention Time ± 10 secs",
+        name=f"Retention Time ± {rt_window} secs",
     )
 
     selection_slider = alt.selection_single(
-        fields=["rt"], bind=input_slider, init=dict(rt=5)
+        fields=["rt"], bind=input_slider, init=dict(rt=rt_window/2)
     )
 
     chart = (
-        alt.Chart(df.sort_values("intensity"), title=title)
-        .mark_circle(size=25, opacity=0.5)
+        alt.Chart(df.sort_values("intensity", ascending=False), title=title)
+        .mark_point(opacity=0.8, strokeWidth=0.4, stroke="black", fillOpacity=0.8)
         .encode(
             x=alt.X(
                 "mz_integer:Q", scale=alt.Scale(domain=(0, 1200), clamp=True)
@@ -141,25 +142,31 @@ def plot_fims_with_rt_filter(
                 "mz_fractional:Q",
                 scale=alt.Scale(domain=(-0.01, 1.01), nice=False, clamp=True),
             ),
-            color=alt.Color(
+            fill=alt.Color(
                 "intensity:Q",
                 scale=alt.Scale(
-                    type="log", domain=(1000, 1_000_000), scheme="viridis"
+                    type="log", domain=(100_000, 1_000_000_000), scheme="turbo"
                 ),
                 legend=alt.Legend(title="Feature Intensity"),
             ),
+            size=alt.Size('s:Q', legend=None),
             tooltip=[
+                alt.Tooltip("peak_id"),
                 alt.Tooltip("mz", format=".4f"),
                 alt.Tooltip("intensity"),
                 alt.Tooltip("rt", format=".2f"),
+                alt.Tooltip("spectrum"),
             ],
         )
         .transform_calculate(
-            mz_integer="floor(datum.mz)", mz_fractional="datum.mz % 1",
+            mz_integer="floor(datum.mz)",
+            mz_fractional="datum.mz % 1",
+            s="sqrt(datum.intensity) * 2",
         )
         .transform_filter(
-            (alt.datum.rt < selection_slider.rt + 10)
-            & (selection_slider.rt - 10 < alt.datum.rt)
+            (alt.datum.rt < selection_slider.rt + rt_window)
+            &
+            (alt.datum.rt > selection_slider.rt - rt_window)
         )
         .add_selection(selection_slider)
         .properties(width=figsize[0], height=figsize[1])
