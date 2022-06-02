@@ -28,13 +28,13 @@ Here we demonstrate the data model and some of the MisoSoup features using a NIS
 - novel SQL-based algorithm for identifying peaks (local intensity maxima)
 - linking peaks and MS2 spectra
 - "backwards compatibility" with regular LCMS data (mzML processing coming soon)
-- interactive visualizations with [Altair/Vega](https://altair-viz.github.io/)
+- [interactive visualizations](https://misosoup.s3.amazonaws.com/MisoSoup-Preview.html) with [Altair/Vega](https://altair-viz.github.io/)
 
 ## Installation
 `conda env create -f environment.yml`
 
 ## Usage
-[live notebook link]
+[HTML notebook with live, interactive plots](https://misosoup.s3.amazonaws.com/MisoSoup-Preview.html )
 
 This repo contains one lipidomics run processed with MisoSoup, `msrun_id 'LIPID6950'`.  Upon importing misosoup, the Parquet files are registered as a DuckDB database, and are instantly available for querying via `MisoQuery`.
 
