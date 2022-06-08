@@ -31,7 +31,15 @@ Here we demonstrate the data model and some of the MisoSoup features using a NIS
 - [interactive visualizations](https://misosoup.s3.amazonaws.com/MisoSoup-Preview.html) with [Altair/Vega](https://altair-viz.github.io/)
 
 ## Installation
-`conda env create -f environment.yml`
+```bash
+git clone https://github.com/enveda/misosoup-preview.git # clone repo
+cd misosoup-preview # change to directory
+conda env create -f environment.yml # create environment
+conda activate misosoup-preview # activate environment
+jupyter notebook # start jupyter
+```
+
+Navigate to the `notebooks` directory and click on `Misosoup-Preview.ipynb`
 
 ## Usage
 [HTML notebook with live, interactive plots](https://misosoup.s3.amazonaws.com/MisoSoup-Preview.html )
