@@ -32,11 +32,10 @@ Here we demonstrate the data model and some of the MisoSoup features using a NIS
 
 ## Installation
 ```bash
-git clone https://github.com/enveda/misosoup-preview.git # clone repo
-cd misosoup-preview # change to directory
-conda env create -f environment.yml # create environment
-conda activate misosoup-preview # activate environment
-jupyter notebook # start jupyter
+git clone https://github.com/enveda/misosoup-preview.git
+cd misosoup-preview
+conda env create -f environment.yml
+conda activate misosoup-previewjupyter notebook
 ```
 
 Navigate to the `notebooks` directory and click on `Misosoup-Preview.ipynb`
