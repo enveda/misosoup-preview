@@ -24,7 +24,7 @@ from pyarrow.dataset import dataset as pyarrow_dataset
 # Globals & Constants
 # ------------------------------------------------------------------------------
 
-DATA_ROOT = os.path.abspath("data/")
+DATA_ROOT = os.path.abspath("../data/")
 os.chdir(DATA_ROOT)  # we start in the data folder by default
 
 
